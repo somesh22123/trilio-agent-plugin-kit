@@ -1,6 +1,6 @@
-# {{sku}}-k8s-skill
+# {{repo}}
 
-Agent plugins for Trilio {{SKU}}, owned by the {{SKU}} team. Built with
+The {{plugin_name}} agent plugin for {{title}}, owned by the {{SKU}} team. Built with
 [trilio-agent-plugin-kit](https://github.com/{{owner}}/trilio-agent-plugin-kit) {{kit_version}}.
 
 ## Layout

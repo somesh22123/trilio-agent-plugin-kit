@@ -7,7 +7,7 @@ Subcommands:
   package   PLUGIN_DIR --out DIR    build the generic-agent zip (plugin + install.sh)
   catalog   [--check] [--verify] ROOT   build (or verify) marketplace files from ROOT/catalog.yaml
   pin       ROOT NAME REF           point a catalog entry at REF and record the commit sha
-  new-sku   SKU --out DIR           scaffold a new SKU repo from template/sku-repo
+  new-sku   NAME --sku CODE --title T --out DIR   scaffold a new SKU repo from template/sku-repo
 
 Requires Python 3.9+ and PyYAML.
 """
@@ -30,7 +30,9 @@ KIT_VERSION = (KIT_DIR / "VERSION").read_text().strip()
 TARGETS = ("claude-code", "codex", "cursor", "junie")
 GENERATED_INDEX = ".generated.json"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
-NAMING_RULE_RE = re.compile(r"^trilio-[a-z0-9]+-[a-z0-9-]+$")
+# Naming rule: plugin name = its repo name without this suffix,
+# e.g. trilio-for-kubernetes in trilio-for-kubernetes-agent-plugin.
+REPO_SUFFIX = "-agent-plugin"
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 REQUIRED_FIELDS = ("name", "version", "description", "author", "targets")
 
@@ -214,9 +216,17 @@ def validate_plugin(plugin_dir):
         return errors, warnings
 
     if not NAME_RE.match(p["name"]):
-        errors.append(f"plugin.yaml: name '{p['name']}' must be kebab-case")
-    elif not NAMING_RULE_RE.match(p["name"]):
-        warnings.append(f"plugin.yaml: name '{p['name']}' does not follow trilio-<sku>-<purpose>")
+        errors.append(f"plugin.yaml: name '{p['name']}' must be lowercase kebab-case")
+    repo = str(p.get("repository", "")).rstrip("/").removesuffix(".git").rsplit("/", 1)[-1]
+    if not repo:
+        errors.append("plugin.yaml: repository is required")
+    elif not repo.endswith(REPO_SUFFIX):
+        errors.append(f"plugin.yaml: repo '{repo}' must be named '{p['name']}{REPO_SUFFIX}'")
+    elif repo != p["name"] + REPO_SUFFIX:
+        errors.append(
+            f"plugin.yaml: name '{p['name']}' must be the repo name without '{REPO_SUFFIX}': "
+            f"'{repo.removesuffix(REPO_SUFFIX)}'"
+        )
     if p["name"] != plugin_dir.name:
         errors.append(f"plugin.yaml: name '{p['name']}' must match folder '{plugin_dir.name}'")
     if not SEMVER_RE.match(str(p["version"])):
@@ -483,14 +493,15 @@ def cmd_pin(args):
 # ---------------------------------------------------------------------------
 
 def cmd_new_sku(args):
-    sku = args.sku.lower()
-    if not NAME_RE.match(sku):
-        raise KitError("SKU must be lowercase letters, digits and dashes")
+    plugin_name, sku = args.plugin_name, args.sku.lower()
+    if not NAME_RE.match(plugin_name) or not NAME_RE.match(sku):
+        raise KitError("plugin name and SKU must be lowercase letters, digits and dashes")
     values = {
         "sku": sku,
         "SKU": args.sku.upper(),
-        "purpose": args.purpose,
-        "plugin_name": f"trilio-{sku}-{args.purpose}",
+        "title": args.title,
+        "plugin_name": plugin_name,
+        "repo": plugin_name + REPO_SUFFIX,
         "owner": args.owner,
         "kit_version": f"v{KIT_VERSION}",
     }
@@ -548,8 +559,9 @@ def main(argv=None):
     pn.set_defaults(func=cmd_pin)
 
     n = sub.add_parser("new-sku", help="scaffold a SKU plugin repo")
-    n.add_argument("sku")
-    n.add_argument("--purpose", default="guide")
+    n.add_argument("plugin_name", help="e.g. trilio-for-kubernetes; the repo is <plugin_name>-agent-plugin")
+    n.add_argument("--sku", required=True, help="short SKU code, e.g. t4k")
+    n.add_argument("--title", required=True, help="product name, e.g. 'Trilio for Kubernetes'")
     n.add_argument("--owner", default="somesh22123")
     n.add_argument("--out", required=True)
     n.set_defaults(func=cmd_new_sku)

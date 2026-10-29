@@ -39,13 +39,28 @@ regenerating.
 ## Commands
 
 ```sh
-python pluginkit.py new-sku t4k --out ../t4k-k8s-skill   # new SKU repo in one command
+python pluginkit.py new-sku trilio-for-kubernetes --sku t4k --title 'Trilio for Kubernetes' \
+    --out ../trilio-for-kubernetes-agent-plugin            # new SKU repo in one command
 python pluginkit.py validate <sku-repo>
 python pluginkit.py generate [--check] <sku-repo>
 python pluginkit.py package <sku-repo>/plugins/<name> --out dist
 python pluginkit.py catalog [--check] [--verify] <marketplace-repo>
 python pluginkit.py pin <marketplace-repo> <name> <name>/v<version>
 ```
+
+## Naming rule
+
+A plugin's name is its repo name without `-agent-plugin`. `validate` fails otherwise.
+
+| SKU | Repo | Plugin |
+| --- | --- | --- |
+| TSR-K | `site-recovery-kubernetes-agent-plugin` | `site-recovery-kubernetes` |
+| TSR-O | `site-recovery-openstack-agent-plugin` | `site-recovery-openstack` |
+| T4K | `trilio-for-kubernetes-agent-plugin` | `trilio-for-kubernetes` |
+| T4O | `trilio-for-openstack-agent-plugin` | `trilio-for-openstack` |
+
+The name is what customers install (`<name>@trilio`) and the prefix of every
+skill (`/<name>:<skill>`), so it should not change after launch.
 
 ## Versioning
 

@@ -1,9 +1,9 @@
 ---
-name: {{sku}}-{{purpose}}
-description: Use when the user works with Trilio {{SKU}} on Kubernetes. Covers checking status, reading resources and safe operating rules.
+name: {{sku}}-guide
+description: Use when the user works with {{title}}. Covers checking status, reading resources and safe operating rules.
 ---
 
-# Trilio {{SKU}} {{purpose}}
+# {{title}}
 
 TODO({{sku}}-team): replace with product guidance. Follow docs/skill-style-guide.md in the kit.
 

@@ -2,7 +2,7 @@
 plugin: {{plugin_name}}
 cases:
   - id: status-check
-    prompt: Is Trilio {{SKU}} healthy in this cluster?
+    prompt: Is {{title}} healthy in this environment?
     expect:
       - uses the trilio-{{sku}} MCP server or read-only kubectl
       - makes no changes to the cluster
