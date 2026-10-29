@@ -1,0 +1,61 @@
+# Reusable CI for SKU plugin repos. Call it from a SKU repo with:
+#
+#   jobs:
+#     plugin-ci:
+#       uses: somesh22123/trilio-agent-plugin-kit/.github/workflows/plugin-ci.yml@v1.0.0
+#       with:
+#         kit-ref: v1.0.0
+#
+# Keep the @ref and kit-ref equal: that pair is the SKU repo's kit pin.
+name: plugin-ci
+
+on:
+  workflow_call:
+    inputs:
+      kit-ref:
+        description: Kit tag this SKU repo is pinned to
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: somesh22123/trilio-agent-plugin-kit
+          ref: ${{ inputs.kit-ref }}
+          path: .pluginkit
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install pyyaml
+
+      - name: Warn when the kit pin is two or more versions old
+        run: |
+          newer=$(git ls-remote --tags --refs https://github.com/somesh22123/trilio-agent-plugin-kit.git 'v*' \
+            | sed 's#.*refs/tags/##' | sort -V | awk -v cur="${{ inputs.kit-ref }}" 'f{n++} $0==cur{f=1} END{print n+0}')
+          if [ "$newer" -ge 2 ]; then
+            echo "::warning::Kit pin ${{ inputs.kit-ref }} is $newer releases behind. Bump it in .github/workflows/*.yml."
+          fi
+
+      - name: Validate plugin sources
+        run: python .pluginkit/pluginkit.py validate .
+
+      - name: Generated files match plugin.yaml
+        run: python .pluginkit/pluginkit.py generate --check .
+
+      - name: Tests
+        run: |
+          if [ -d tests ]; then python -m unittest discover -s tests -v; else echo "no tests/"; fi
+
+      - name: Package every plugin
+        run: |
+          for p in plugins/*/; do python .pluginkit/pluginkit.py package "$p" --out dist; done

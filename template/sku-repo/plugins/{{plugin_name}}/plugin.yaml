@@ -1,0 +1,26 @@
+# Portable plugin source. `pluginkit generate` turns this into the manifest
+# files Claude Code, Codex, Cursor and Junie each expect.
+name: {{plugin_name}}
+displayName: Trilio {{SKU}} {{purpose}}
+version: 0.1.0
+description: Helps AI coding agents work with Trilio {{SKU}} correctly.
+author:
+  name: Trilio {{SKU}} Team
+  email: {{sku}}-team@trilio.io
+homepage: https://github.com/{{owner}}/{{sku}}-k8s-skill
+repository: https://github.com/{{owner}}/{{sku}}-k8s-skill
+license: Apache-2.0
+keywords: [trilio, {{sku}}, kubernetes]
+category: Developer Tools
+
+# Agent tools to generate files for: claude-code, codex, cursor, junie.
+targets: [claude-code, codex, cursor]
+
+mcpServers:
+  trilio-{{sku}}:
+    command: trilio-{{sku}}-mcp
+    args: ["--read-only"]
+
+codex:
+  defaultPrompt:
+    - Check the health of Trilio {{SKU}} in this cluster

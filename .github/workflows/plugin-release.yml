@@ -1,0 +1,61 @@
+# Reusable release workflow for SKU plugin repos. Triggered by a tag such as
+# trilio-tsr-guide/v0.2.0: checks the tag matches plugin.yaml, builds the
+# generic-agent zip and publishes a GitHub release.
+name: plugin-release
+
+on:
+  workflow_call:
+    inputs:
+      kit-ref:
+        description: Kit tag this SKU repo is pinned to
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: somesh22123/trilio-agent-plugin-kit
+          ref: ${{ inputs.kit-ref }}
+          path: .pluginkit
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install pyyaml
+
+      - name: Parse tag
+        id: tag
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          name="${tag%/v*}"
+          version="${tag##*/v}"
+          if [ ! -f "plugins/$name/plugin.yaml" ]; then
+            echo "::error::Tag $tag does not match a folder under plugins/"; exit 1
+          fi
+          declared=$(python -c "import yaml,sys; print(yaml.safe_load(open(sys.argv[1]))['version'])" "plugins/$name/plugin.yaml")
+          if [ "$declared" != "$version" ]; then
+            echo "::error::Tag says $version but plugins/$name/plugin.yaml says $declared"; exit 1
+          fi
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - run: python .pluginkit/pluginkit.py validate .
+      - run: python .pluginkit/pluginkit.py generate --check .
+      - run: python .pluginkit/pluginkit.py package "plugins/${{ steps.tag.outputs.name }}" --out dist
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.zip \
+            --title "${{ steps.tag.outputs.name }} ${{ steps.tag.outputs.version }}" \
+            --notes "Built with trilio-agent-plugin-kit ${{ inputs.kit-ref }}. Add it to the catalog with: pluginkit pin <marketplace> ${{ steps.tag.outputs.name }} $GITHUB_REF_NAME"

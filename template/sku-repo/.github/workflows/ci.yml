@@ -1,0 +1,13 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  plugin-ci:
+    # Kit pin: keep the @ref and kit-ref equal (also in release.yml).
+    uses: {{owner}}/trilio-agent-plugin-kit/.github/workflows/plugin-ci.yml@{{kit_version}}
+    with:
+      kit-ref: {{kit_version}}

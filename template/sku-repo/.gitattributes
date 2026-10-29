@@ -1,0 +1,8 @@
+# Written by `pluginkit generate`; edit plugin.yaml instead.
+plugins/*/.generated.json linguist-generated=true
+plugins/*/.claude-plugin/** linguist-generated=true
+plugins/*/.codex-plugin/** linguist-generated=true
+plugins/*/.cursor-plugin/** linguist-generated=true
+plugins/*/.junie/** linguist-generated=true
+plugins/*/.mcp.json linguist-generated=true
+plugins/*/mcp.json linguist-generated=true

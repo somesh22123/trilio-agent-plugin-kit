@@ -1,0 +1,8 @@
+# Eval cases for {{plugin_name}}. Each case is a prompt and what a correct answer must do.
+plugin: {{plugin_name}}
+cases:
+  - id: status-check
+    prompt: Is Trilio {{SKU}} healthy in this cluster?
+    expect:
+      - uses the trilio-{{sku}} MCP server or read-only kubectl
+      - makes no changes to the cluster
