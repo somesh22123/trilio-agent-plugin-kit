@@ -5,7 +5,7 @@ Owned by the **platform group**. Part of **Option A (three-repo model)** in the
 
 | Repo | Owner | Role |
 | --- | --- | --- |
-| [tsr-k8s-skill](https://github.com/somesh22123/tsr-k8s-skill) (one per SKU) | SKU team | The SKU's plugins, MCP server, tests, evals, release |
+| [site-recovery-kubernetes](https://github.com/somesh22123/site-recovery-kubernetes) (one per SKU) | SKU team | The SKU's plugins, MCP server, tests, evals, release |
 | **trilio-agent-plugin-kit** (this repo) | Platform group | Generator, shared CI, new-SKU template, skill style guide |
 | [trilio-agent-marketplace](https://github.com/somesh22123/trilio-agent-marketplace) | Platform group | One catalog listing every SKU plugin at a released tag |
 
