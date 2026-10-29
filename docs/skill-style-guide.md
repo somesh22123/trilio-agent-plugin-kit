@@ -20,8 +20,8 @@ ones marked **(checked)**.
 
 ## Naming
 
-- Plugin: the repo name without `-agent-plugin`, e.g. `trilio-for-kubernetes` in
-  `trilio-for-kubernetes-agent-plugin`. Lowercase letters, digits and dashes. **(checked)**
+- Plugin: the repo name without `-ai-plugin`, e.g. `trilio-for-kubernetes` in
+  `trilio-for-kubernetes-ai-plugin`. Lowercase letters, digits and dashes. **(checked)**
 - Skill: `<sku>-<topic>`, e.g. `tsr-guide`, `tsr-failover`.
 - MCP server key: `trilio-<sku>`.
 

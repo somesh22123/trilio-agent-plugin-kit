@@ -31,8 +31,8 @@ TARGETS = ("claude-code", "codex", "cursor", "junie")
 GENERATED_INDEX = ".generated.json"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 # Naming rule: plugin name = its repo name without this suffix,
-# e.g. trilio-for-kubernetes in trilio-for-kubernetes-agent-plugin.
-REPO_SUFFIX = "-agent-plugin"
+# e.g. trilio-for-kubernetes in trilio-for-kubernetes-ai-plugin.
+REPO_SUFFIX = "-ai-plugin"
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 REQUIRED_FIELDS = ("name", "version", "description", "author", "targets")
 
@@ -559,7 +559,7 @@ def main(argv=None):
     pn.set_defaults(func=cmd_pin)
 
     n = sub.add_parser("new-sku", help="scaffold a SKU plugin repo")
-    n.add_argument("plugin_name", help="e.g. trilio-for-kubernetes; the repo is <plugin_name>-agent-plugin")
+    n.add_argument("plugin_name", help="e.g. trilio-for-kubernetes; the repo is <plugin_name>-ai-plugin")
     n.add_argument("--sku", required=True, help="short SKU code, e.g. t4k")
     n.add_argument("--title", required=True, help="product name, e.g. 'Trilio for Kubernetes'")
     n.add_argument("--owner", default="somesh22123")

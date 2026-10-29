@@ -40,7 +40,7 @@ regenerating.
 
 ```sh
 python pluginkit.py new-sku trilio-for-kubernetes --sku t4k --title 'Trilio for Kubernetes' \
-    --out ../trilio-for-kubernetes-agent-plugin            # new SKU repo in one command
+    --out ../trilio-for-kubernetes-ai-plugin            # new SKU repo in one command
 python pluginkit.py validate <sku-repo>
 python pluginkit.py generate [--check] <sku-repo>
 python pluginkit.py package <sku-repo>/plugins/<name> --out dist
@@ -50,14 +50,14 @@ python pluginkit.py pin <marketplace-repo> <name> <name>/v<version>
 
 ## Naming rule
 
-A plugin's name is its repo name without `-agent-plugin`. `validate` fails otherwise.
+A plugin's name is its repo name without `-ai-plugin`. `validate` fails otherwise.
 
 | SKU | Repo | Plugin |
 | --- | --- | --- |
-| TSR-K | `site-recovery-kubernetes-agent-plugin` | `site-recovery-kubernetes` |
-| TSR-O | `site-recovery-openstack-agent-plugin` | `site-recovery-openstack` |
-| T4K | `trilio-for-kubernetes-agent-plugin` | `trilio-for-kubernetes` |
-| T4O | `trilio-for-openstack-agent-plugin` | `trilio-for-openstack` |
+| TSR-K | `site-recovery-kubernetes-ai-plugin` | `site-recovery-kubernetes` |
+| TSR-O | `site-recovery-openstack-ai-plugin` | `site-recovery-openstack` |
+| T4K | `trilio-for-kubernetes-ai-plugin` | `trilio-for-kubernetes` |
+| T4O | `trilio-for-openstack-ai-plugin` | `trilio-for-openstack` |
 
 The name is what customers install (`<name>@trilio`) and the prefix of every
 skill (`/<name>:<skill>`), so it should not change after launch.

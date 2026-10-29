@@ -21,7 +21,7 @@ def run(*argv):
 class NewSkuTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.repo = Path(self.tmp.name) / "trilio-for-kubernetes-agent-plugin"
+        self.repo = Path(self.tmp.name) / "trilio-for-kubernetes-ai-plugin"
         code, out = run("new-sku", "trilio-for-kubernetes", "--sku", "t4k",
                         "--title", "Trilio for Kubernetes", "--out", str(self.repo))
         self.assertEqual(code, 0, out)
@@ -71,10 +71,10 @@ class NewSkuTest(unittest.TestCase):
     def test_validate_enforces_naming_rule(self):
         src = self.plugin / "plugin.yaml"
         src.write_text(src.read_text().replace(
-            "trilio-for-kubernetes-agent-plugin", "t4k-k8s-skill"))
+            "trilio-for-kubernetes-ai-plugin", "t4k-k8s-skill"))
         code, out = run("validate", str(self.repo))
         self.assertEqual(code, 1)
-        self.assertIn("must be named 'trilio-for-kubernetes-agent-plugin'", out)
+        self.assertIn("must be named 'trilio-for-kubernetes-ai-plugin'", out)
 
     def test_validate_catches_bad_skill(self):
         skill = self.plugin / "skills/t4k-guide/SKILL.md"
@@ -99,7 +99,7 @@ class CatalogTest(unittest.TestCase):
             root = Path(tmp)
             (root / "catalog.yaml").write_text(
                 "name: trilio\ndescription: d\nowner: {name: Trilio}\nplugins:\n"
-                "  - name: site-recovery-kubernetes\n    repo: acme/site-recovery-kubernetes-agent-plugin\n"
+                "  - name: site-recovery-kubernetes\n    repo: acme/site-recovery-kubernetes-ai-plugin\n"
                 "    path: plugins/site-recovery-kubernetes\n    ref: site-recovery-kubernetes/v0.1.0\n"
                 "    description: TSR\n"
             )
@@ -109,7 +109,7 @@ class CatalogTest(unittest.TestCase):
             claude = json.loads((root / ".claude-plugin/marketplace.json").read_text())
             src = claude["plugins"][0]["source"]
             self.assertEqual(src["source"], "git-subdir")
-            self.assertEqual(src["url"], "https://github.com/acme/site-recovery-kubernetes-agent-plugin.git")
+            self.assertEqual(src["url"], "https://github.com/acme/site-recovery-kubernetes-ai-plugin.git")
             self.assertEqual(claude["plugins"][0]["version"], "0.1.0")
             codex = json.loads((root / ".agents/plugins/marketplace.json").read_text())
             self.assertEqual(codex["plugins"][0]["policy"]["installation"], "AVAILABLE")
